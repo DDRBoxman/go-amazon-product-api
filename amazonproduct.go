@@ -9,6 +9,8 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"time"
+	"net/http"
+	"io/ioutil"
 )
 
 type AmazonProductAPI struct {
@@ -18,23 +20,39 @@ type AmazonProductAPI struct {
 	Host string
 }
 
-func (api AmazonProductAPI) ItemSearchByKeyword(Keywords string) {
+func (api AmazonProductAPI) ItemSearchByKeyword(Keywords string) (string, error) {
 	params := map[string] string {
 		"Keywords": Keywords,
 	}
-	api.ItemSearch("All", params)
+	return api.ItemSearch("All", params)
 }
 
-func (api AmazonProductAPI) ItemSearch(SearchIndex string, Parameters map[string] string) {
+func (api AmazonProductAPI) ItemSearch(SearchIndex string, Parameters map[string] string) (string,error){
 	Parameters["SearchIndex"] = SearchIndex
 	genUrl, err := GenerateAmazonUrl(api, "ItemSearch", Parameters)
 	if (err != nil) {
-		
+		return "", err
 	}
 
 	SetTimestamp(genUrl)
 
-	SignAmazonUrl(genUrl, api)	
+	signedurl,err := SignAmazonUrl(genUrl, api)
+	if (err != nil) {
+		return "", err
+	}
+
+	resp, err := http.Get(signedurl)
+	if (err != nil) {
+		return "", err
+	}	
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if (err != nil) {
+		return "", err
+	}
+
+	return string(body), nil
 }
 
 func GenerateAmazonUrl(api AmazonProductAPI, Operation string, Parameters map[string] string) (finalUrl *url.URL, err error) {
