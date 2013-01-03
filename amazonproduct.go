@@ -27,6 +27,14 @@ func (api AmazonProductAPI) ItemSearchByKeyword(Keywords string) (string, error)
 	return api.ItemSearch("All", params)
 }
 
+func (api AmazonProductAPI) ItemSearchByKeywordWithResponseGroup(Keywords string, ResponseGroup string) (string, error) {	
+	params := map[string] string {
+		"Keywords": Keywords,
+		"ResponseGroup" : ResponseGroup,
+	}
+	return api.ItemSearch("All", params)
+}
+
 func (api AmazonProductAPI) ItemSearch(SearchIndex string, Parameters map[string] string) (string,error){
 	Parameters["SearchIndex"] = SearchIndex
 	genUrl, err := GenerateAmazonUrl(api, "ItemSearch", Parameters)
