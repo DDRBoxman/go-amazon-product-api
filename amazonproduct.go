@@ -23,6 +23,7 @@ type AmazonProductAPI struct {
 func (api AmazonProductAPI) ItemSearchByKeyword(Keywords string) (string, error) {
 	params := map[string] string {
 		"Keywords": Keywords,
+		"ResponseGroup" : "Images,ItemAttributes,Small,EditorialReview",
 	}
 	return api.ItemSearch("All", params)
 }
