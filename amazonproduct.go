@@ -32,7 +32,7 @@ func (api AmazonProductAPI) ItemSearch(SearchIndex string, Parameters map[string
 		
 	}
 
-	setTimestamp(genUrl)
+	SetTimestamp(genUrl)
 
 	SignAmazonUrl(genUrl, api)	
 }
@@ -65,7 +65,7 @@ func GenerateAmazonUrl(api AmazonProductAPI, Operation string, Parameters map[st
 	return result, nil
 }
 
-func setTimestamp(origUrl *url.URL) (err error) {
+func SetTimestamp(origUrl *url.URL) (err error) {
 	values, err := url.ParseQuery(origUrl.RawQuery)
 	if (err != nil) {
 		return err
