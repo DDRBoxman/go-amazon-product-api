@@ -8,12 +8,14 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"time"
 )
 
 type AmazonProductAPI struct {
 	AccessKey string
 	SecretKey string
 	AssociateTag string
+	Host string
 }
 
 func (api AmazonProductAPI) ItemSearchByKeyword(Keywords string) {
@@ -24,7 +26,54 @@ func (api AmazonProductAPI) ItemSearchByKeyword(Keywords string) {
 }
 
 func (api AmazonProductAPI) ItemSearch(SearchIndex string, Parameters map[string] string) {
+	Parameters["SearchIndex"] = SearchIndex
+	genUrl, err := GenerateAmazonUrl(api, "ItemSearch", Parameters)
+	if (err != nil) {
+		
+	}
 
+	setTimestamp(genUrl)
+
+	SignAmazonUrl(genUrl, api)	
+}
+
+func GenerateAmazonUrl(api AmazonProductAPI, Operation string, Parameters map[string] string) (finalUrl *url.URL, err error) {
+
+	result,err := url.Parse(api.Host)
+	if (err != nil) {
+		return nil, err
+	}
+
+	result.Host = api.Host
+	result.Scheme = "http"
+	result.Path = "/onca/xml"
+
+	values := url.Values{}
+	values.Add("Operation", Operation)
+	values.Add("Service", "AWSECommerceService")
+	values.Add("AWSAccessKeyId", api.AccessKey)
+	values.Add("Version", "2009-01-01")
+	values.Add("AssociateTag", api.AssociateTag)
+
+	for k, v := range Parameters {
+		values.Set(k, v)
+	}
+
+	params := values.Encode()
+	result.RawQuery = params
+
+	return result, nil
+}
+
+func setTimestamp(origUrl *url.URL) (err error) {
+	values, err := url.ParseQuery(origUrl.RawQuery)
+	if (err != nil) {
+		return err
+	}
+	values.Set("Timestamp", time.Now().UTC().Format(time.RFC3339))
+	origUrl.RawQuery = values.Encode()
+
+	return nil
 }
 
 func SignAmazonUrl(origUrl *url.URL, api AmazonProductAPI) (signedUrl string , err error){
