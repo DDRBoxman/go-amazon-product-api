@@ -21,10 +21,5 @@ _______
 			fmt.Println(err)
 		}
 
-		products, err := amazonproduct.ParseItemResponse(result)
-		if (err != nil) {
-			fmt.Println(err)
-		} else {
-			fmt.Println(products)
-		}
+		fmt.Println(result)
 	}
