@@ -1,3 +1,4 @@
+//Package amazonproduct provides methods for interacting with the Amazon Product Advertising API
 package amazonproduct
 
 import (
