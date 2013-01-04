@@ -1,86 +1,86 @@
-package amazonproduct 
+package amazonproduct
 
 import (
-	"net/url"
-	"sort"
-	"fmt"
-	"strings"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
-	"time"
-	"net/http"
+	"fmt"
 	"io/ioutil"
+	"net/http"
+	"net/url"
+	"sort"
+	"strings"
+	"time"
 )
 
 type AmazonProductAPI struct {
-	AccessKey string
-	SecretKey string
+	AccessKey    string
+	SecretKey    string
 	AssociateTag string
-	Host string
+	Host         string
 }
 
 func (api AmazonProductAPI) ItemLookup(ItemId string) (string, error) {
-	params := map[string] string {
-		"ItemId" : ItemId,
-		"ResponseGroup" : "Images,ItemAttributes,Small,EditorialReview",
+	params := map[string]string{
+		"ItemId":        ItemId,
+		"ResponseGroup": "Images,ItemAttributes,Small,EditorialReview",
 	}
 
 	return api.genSignAndFetch("ItemLookup", params)
 }
 
 func (api AmazonProductAPI) ItemSearchByKeyword(Keywords string) (string, error) {
-	params := map[string] string {
-		"Keywords": Keywords,
-		"ResponseGroup" : "Images,ItemAttributes,Small,EditorialReview",
+	params := map[string]string{
+		"Keywords":      Keywords,
+		"ResponseGroup": "Images,ItemAttributes,Small,EditorialReview",
 	}
 	return api.ItemSearch("All", params)
 }
 
-func (api AmazonProductAPI) ItemSearchByKeywordWithResponseGroup(Keywords string, ResponseGroup string) (string, error) {	
-	params := map[string] string {
-		"Keywords": Keywords,
-		"ResponseGroup" : ResponseGroup,
+func (api AmazonProductAPI) ItemSearchByKeywordWithResponseGroup(Keywords string, ResponseGroup string) (string, error) {
+	params := map[string]string{
+		"Keywords":      Keywords,
+		"ResponseGroup": ResponseGroup,
 	}
 	return api.ItemSearch("All", params)
 }
 
-func (api AmazonProductAPI) ItemSearch(SearchIndex string, Parameters map[string] string) (string,error){
+func (api AmazonProductAPI) ItemSearch(SearchIndex string, Parameters map[string]string) (string, error) {
 	Parameters["SearchIndex"] = SearchIndex
 	return api.genSignAndFetch("ItemSearch", Parameters)
 }
 
-func (api AmazonProductAPI) genSignAndFetch(Operation string, Parameters map[string]string) (string, error){
+func (api AmazonProductAPI) genSignAndFetch(Operation string, Parameters map[string]string) (string, error) {
 	genUrl, err := GenerateAmazonUrl(api, Operation, Parameters)
-        if (err != nil) {
-                return "", err
-        }
+	if err != nil {
+		return "", err
+	}
 
-        SetTimestamp(genUrl)
+	SetTimestamp(genUrl)
 
-        signedurl,err := SignAmazonUrl(genUrl, api)
-        if (err != nil) {
-                return "", err
-        }
+	signedurl, err := SignAmazonUrl(genUrl, api)
+	if err != nil {
+		return "", err
+	}
 
-        resp, err := http.Get(signedurl)
-        if (err != nil) {
-                return "", err
-        }
+	resp, err := http.Get(signedurl)
+	if err != nil {
+		return "", err
+	}
 
-        defer resp.Body.Close()
-        body, err := ioutil.ReadAll(resp.Body)
-        if (err != nil) {
-                return "", err
-        }
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
 
-        return string(body), nil
+	return string(body), nil
 }
 
-func GenerateAmazonUrl(api AmazonProductAPI, Operation string, Parameters map[string] string) (finalUrl *url.URL, err error) {
+func GenerateAmazonUrl(api AmazonProductAPI, Operation string, Parameters map[string]string) (finalUrl *url.URL, err error) {
 
-	result,err := url.Parse(api.Host)
-	if (err != nil) {
+	result, err := url.Parse(api.Host)
+	if err != nil {
 		return nil, err
 	}
 
@@ -107,7 +107,7 @@ func GenerateAmazonUrl(api AmazonProductAPI, Operation string, Parameters map[st
 
 func SetTimestamp(origUrl *url.URL) (err error) {
 	values, err := url.ParseQuery(origUrl.RawQuery)
-	if (err != nil) {
+	if err != nil {
 		return err
 	}
 	values.Set("Timestamp", time.Now().UTC().Format(time.RFC3339))
@@ -116,7 +116,7 @@ func SetTimestamp(origUrl *url.URL) (err error) {
 	return nil
 }
 
-func SignAmazonUrl(origUrl *url.URL, api AmazonProductAPI) (signedUrl string , err error){
+func SignAmazonUrl(origUrl *url.URL, api AmazonProductAPI) (signedUrl string, err error) {
 
 	escapeUrl := strings.Replace(origUrl.RawQuery, ",", "%2C", -1)
 	escapeUrl = strings.Replace(escapeUrl, ":", "%3A", -1)
@@ -129,7 +129,7 @@ func SignAmazonUrl(origUrl *url.URL, api AmazonProductAPI) (signedUrl string , e
 
 	hasher := hmac.New(sha256.New, []byte(api.SecretKey))
 	_, err = hasher.Write([]byte(toSign))
-	if (err != nil) {
+	if err != nil {
 		return "", err
 	}
 
