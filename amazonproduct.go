@@ -20,6 +20,15 @@ type AmazonProductAPI struct {
 	Host string
 }
 
+func (api AmazonProductAPI) ItemLookup(ItemId string) (string, error) {
+	params := map[string] string {
+		"ItemId" : ItemId,
+		"ResponseGroup" : "Images,ItemAttributes,Small,EditorialReview",
+	}
+
+	return api.genSignAndFetch("ItemLookup", params)
+}
+
 func (api AmazonProductAPI) ItemSearchByKeyword(Keywords string) (string, error) {
 	params := map[string] string {
 		"Keywords": Keywords,
@@ -38,30 +47,34 @@ func (api AmazonProductAPI) ItemSearchByKeywordWithResponseGroup(Keywords string
 
 func (api AmazonProductAPI) ItemSearch(SearchIndex string, Parameters map[string] string) (string,error){
 	Parameters["SearchIndex"] = SearchIndex
-	genUrl, err := GenerateAmazonUrl(api, "ItemSearch", Parameters)
-	if (err != nil) {
-		return "", err
-	}
+	return api.genSignAndFetch("ItemSearch", Parameters)
+}
 
-	SetTimestamp(genUrl)
+func (api AmazonProductAPI) genSignAndFetch(Operation string, Parameters map[string]string) (string, error){
+	genUrl, err := GenerateAmazonUrl(api, Operation, Parameters)
+        if (err != nil) {
+                return "", err
+        }
 
-	signedurl,err := SignAmazonUrl(genUrl, api)
-	if (err != nil) {
-		return "", err
-	}
+        SetTimestamp(genUrl)
 
-	resp, err := http.Get(signedurl)
-	if (err != nil) {
-		return "", err
-	}	
+        signedurl,err := SignAmazonUrl(genUrl, api)
+        if (err != nil) {
+                return "", err
+        }
 
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if (err != nil) {
-		return "", err
-	}
+        resp, err := http.Get(signedurl)
+        if (err != nil) {
+                return "", err
+        }
 
-	return string(body), nil
+        defer resp.Body.Close()
+        body, err := ioutil.ReadAll(resp.Body)
+        if (err != nil) {
+                return "", err
+        }
+
+        return string(body), nil
 }
 
 func GenerateAmazonUrl(api AmazonProductAPI, Operation string, Parameters map[string] string) (finalUrl *url.URL, err error) {
