@@ -21,6 +21,9 @@ type AmazonProductAPI struct {
 	Host         string
 }
 
+/*
+ItemLookup takes a product ID (ASIN) and returns the result
+*/
 func (api AmazonProductAPI) ItemLookup(ItemId string) (string, error) {
 	params := map[string]string{
 		"ItemId":        ItemId,
@@ -30,6 +33,9 @@ func (api AmazonProductAPI) ItemLookup(ItemId string) (string, error) {
 	return api.genSignAndFetch("ItemLookup", params)
 }
 
+/*
+ItemSearchByKeyword takes a string containg keywords and returns the search results
+*/
 func (api AmazonProductAPI) ItemSearchByKeyword(Keywords string) (string, error) {
 	params := map[string]string{
 		"Keywords":      Keywords,
