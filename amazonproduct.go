@@ -71,7 +71,7 @@ func (api AmazonProductAPI) CartCreate(items map[string]int) (string, error) {
 CartClear takes a CartId and HMAC that were returned when generating a cart
 It then removes the contents of the cart
 */
-func (api AmazonProductAPI) CartClear(CartId, HAMC string) (string, error) {
+func (api AmazonProductAPI) CartClear(CartId, HMAC string) (string, error) {
 
 	params := map[string]string{
 		"CartId": CartId,
@@ -85,11 +85,11 @@ func (api AmazonProductAPI) CartClear(CartId, HAMC string) (string, error) {
 Cart get takes a CartID and HMAC that were returned when generaing a cart
 Returns the contents of the specified cart
 */
-func (api AmazonProductAPI) CartGet(CartId, HAMC string) {
-	
-	params := map[string]string {
+func (api AmazonProductAPI) CartGet(CartId, HMAC string) {
+
+	params := map[string]string{
 		"CartId": CartId,
-		"HMAC" : HMAC,
+		"HMAC":   HMAC,
 	}
 
 	return api.genSignAndFetch("CartGet", params)
