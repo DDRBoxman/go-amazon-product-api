@@ -67,6 +67,10 @@ func (api AmazonProductAPI) CartCreate(items map[string]int) (string, error) {
 	return api.genSignAndFetch("CartCreate", params)
 }
 
+/*
+CartClear takes a CartId and HMAC that were returned when generating a cart
+It then removes the contents of the cart
+*/
 func (api AmazonProductAPI) CartClear(CartId, HAMC string) (string, error) {
 
 	params := map[string]string{
