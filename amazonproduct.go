@@ -45,8 +45,8 @@ func (api AmazonProductAPI) ItemSearch(SearchIndex string, Parameters map[string
 /*
 CartCreate takes a map containing ASINs and quantities. Up to 10 items are allowed
 */
-func (api AmazonProductAPI) CartCreate(items map[string]int) (string, error){
-	
+func (api AmazonProductAPI) CartCreate(items map[string]int) (string, error) {
+
 	params := make(map[string]string)
 
 	i := 1
@@ -56,13 +56,23 @@ func (api AmazonProductAPI) CartCreate(items map[string]int) (string, error){
 			params[key] = string(k)
 
 			key = fmt.Sprintf("Item.%d.Quantity", i)
-			params[key] = strconv.Itoa(v) 
+			params[key] = strconv.Itoa(v)
 
 			i++
 		} else {
 			break
 		}
-	} 
+	}
 
 	return api.genSignAndFetch("CartCreate", params)
+}
+
+func (api AmazonProductAPI) CartClear(CartId, HAMC string) (string, error) {
+
+	params := map[string]string{
+		"CartId": CartId,
+		"HMAC":   HMAC,
+	}
+
+	return api.genSignAndFetch("CartClear", params)
 }
