@@ -5,7 +5,7 @@ _______
 
 	import (
 		"fmt"
-		"github.com/ddrboxman/go-amazon-product-api"
+		"github.com/DDRBoxman/go-amazon-product-api"
 	)
 
 	func main() {
