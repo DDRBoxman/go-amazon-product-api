@@ -1,7 +1,10 @@
 //Package amazonproduct provides methods for interacting with the Amazon Product Advertising API
 package amazonproduct
 
-import ()
+import (
+	"fmt"
+	"strconv"
+)
 
 /*
 ItemLookup takes a product ID (ASIN) and returns the result
@@ -37,4 +40,29 @@ func (api AmazonProductAPI) ItemSearchByKeywordWithResponseGroup(Keywords string
 func (api AmazonProductAPI) ItemSearch(SearchIndex string, Parameters map[string]string) (string, error) {
 	Parameters["SearchIndex"] = SearchIndex
 	return api.genSignAndFetch("ItemSearch", Parameters)
+}
+
+/*
+CartCreate takes a map containing ASINs and quantities. Up to 10 items are allowed
+*/
+func (api AmazonProductAPI) CartCreate(items map[string]int) (string, error){
+	
+	params := make(map[string]string)
+
+	i := 1
+	for k, v := range items {
+		if i < 11 {
+			key := fmt.Sprintf("Item.%d.ASIN", i)
+			params[key] = string(k)
+
+			key = fmt.Sprintf("Item.%d.Quantity", i)
+			params[key] = strconv.Itoa(v) 
+
+			i++
+		} else {
+			break
+		}
+	} 
+
+	return api.genSignAndFetch("CartCreate", params)
 }
