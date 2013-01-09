@@ -4,6 +4,7 @@ package amazonproduct
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 /*
@@ -12,6 +13,18 @@ ItemLookup takes a product ID (ASIN) and returns the result
 func (api AmazonProductAPI) ItemLookup(ItemId string) (string, error) {
 	params := map[string]string{
 		"ItemId":        ItemId,
+		"ResponseGroup": "Images,ItemAttributes,Small,EditorialReview",
+	}
+
+	return api.genSignAndFetch("ItemLookup", params)
+}
+
+/*
+MultipleItemLookup takes an array of product IDs (ASIN) and returns the result
+*/
+func (api AmazonProductAPI) MultipleItemLookup(ItemIds []string) (string, error) {
+	params := map[string]string{
+		"ItemId":        strings.Join(ItemIds, ","),
 		"ResponseGroup": "Images,ItemAttributes,Small,EditorialReview",
 	}
 
