@@ -34,10 +34,11 @@ func (api AmazonProductAPI) MultipleItemLookup(ItemIds []string) (string, error)
 /*
 ItemSearchByKeyword takes a string containg keywords and returns the search results
 */
-func (api AmazonProductAPI) ItemSearchByKeyword(Keywords string) (string, error) {
+func (api AmazonProductAPI) ItemSearchByKeyword(Keywords string, page int) (string, error) {
 	params := map[string]string{
 		"Keywords":      Keywords,
 		"ResponseGroup": "Images,ItemAttributes,Small,EditorialReview",
+		"ItemPage":      strconv.FormatInt(int64(page), 10),
 	}
 	return api.ItemSearch("All", params)
 }
