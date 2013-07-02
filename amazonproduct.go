@@ -1,132 +1,109 @@
-package amazonproduct 
+//Package amazonproduct provides methods for interacting with the Amazon Product Advertising API
+package amazonproduct
 
 import (
-	"net/url"
-	"sort"
 	"fmt"
+	"strconv"
 	"strings"
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/base64"
-	"time"
-	"net/http"
-	"io/ioutil"
 )
 
-type AmazonProductAPI struct {
-	AccessKey string
-	SecretKey string
-	AssociateTag string
-	Host string
+/*
+ItemLookup takes a product ID (ASIN) and returns the result
+*/
+func (api AmazonProductAPI) ItemLookup(ItemId string) (string, error) {
+	params := map[string]string{
+		"ItemId":        ItemId,
+		"ResponseGroup": "Images,ItemAttributes,Small,EditorialReview",
+	}
+
+	return api.genSignAndFetch("ItemLookup", params)
 }
 
+/*
+MultipleItemLookup takes an array of product IDs (ASIN) and returns the result
+*/
+func (api AmazonProductAPI) MultipleItemLookup(ItemIds []string) (string, error) {
+	params := map[string]string{
+		"ItemId":        strings.Join(ItemIds, ","),
+		"ResponseGroup": "Images,ItemAttributes,Small,EditorialReview",
+	}
+
+	return api.genSignAndFetch("ItemLookup", params)
+}
+
+/*
+ItemSearchByKeyword takes a string containg keywords and returns the search results
+*/
 func (api AmazonProductAPI) ItemSearchByKeyword(Keywords string) (string, error) {
-	params := map[string] string {
-		"Keywords": Keywords,
-		"ResponseGroup" : "Images,ItemAttributes,Small,EditorialReview",
+	params := map[string]string{
+		"Keywords":      Keywords,
+		"ResponseGroup": "Images,ItemAttributes,Small,EditorialReview",
 	}
 	return api.ItemSearch("All", params)
 }
 
-func (api AmazonProductAPI) ItemSearchByKeywordWithResponseGroup(Keywords string, ResponseGroup string) (string, error) {	
-	params := map[string] string {
-		"Keywords": Keywords,
-		"ResponseGroup" : ResponseGroup,
+func (api AmazonProductAPI) ItemSearchByKeywordWithResponseGroup(Keywords string, ResponseGroup string) (string, error) {
+	params := map[string]string{
+		"Keywords":      Keywords,
+		"ResponseGroup": ResponseGroup,
 	}
 	return api.ItemSearch("All", params)
 }
 
-func (api AmazonProductAPI) ItemSearch(SearchIndex string, Parameters map[string] string) (string,error){
+func (api AmazonProductAPI) ItemSearch(SearchIndex string, Parameters map[string]string) (string, error) {
 	Parameters["SearchIndex"] = SearchIndex
-	genUrl, err := GenerateAmazonUrl(api, "ItemSearch", Parameters)
-	if (err != nil) {
-		return "", err
-	}
-
-	SetTimestamp(genUrl)
-
-	signedurl,err := SignAmazonUrl(genUrl, api)
-	if (err != nil) {
-		return "", err
-	}
-
-	resp, err := http.Get(signedurl)
-	if (err != nil) {
-		return "", err
-	}	
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if (err != nil) {
-		return "", err
-	}
-
-	return string(body), nil
+	return api.genSignAndFetch("ItemSearch", Parameters)
 }
 
-func GenerateAmazonUrl(api AmazonProductAPI, Operation string, Parameters map[string] string) (finalUrl *url.URL, err error) {
+/*
+CartCreate takes a map containing ASINs and quantities. Up to 10 items are allowed
+*/
+func (api AmazonProductAPI) CartCreate(items map[string]int) (string, error) {
 
-	result,err := url.Parse(api.Host)
-	if (err != nil) {
-		return nil, err
+	params := make(map[string]string)
+
+	i := 1
+	for k, v := range items {
+		if i < 11 {
+			key := fmt.Sprintf("Item.%d.ASIN", i)
+			params[key] = string(k)
+
+			key = fmt.Sprintf("Item.%d.Quantity", i)
+			params[key] = strconv.Itoa(v)
+
+			i++
+		} else {
+			break
+		}
 	}
 
-	result.Host = api.Host
-	result.Scheme = "http"
-	result.Path = "/onca/xml"
-
-	values := url.Values{}
-	values.Add("Operation", Operation)
-	values.Add("Service", "AWSECommerceService")
-	values.Add("AWSAccessKeyId", api.AccessKey)
-	values.Add("Version", "2009-01-01")
-	values.Add("AssociateTag", api.AssociateTag)
-
-	for k, v := range Parameters {
-		values.Set(k, v)
-	}
-
-	params := values.Encode()
-	result.RawQuery = params
-
-	return result, nil
+	return api.genSignAndFetch("CartCreate", params)
 }
 
-func SetTimestamp(origUrl *url.URL) (err error) {
-	values, err := url.ParseQuery(origUrl.RawQuery)
-	if (err != nil) {
-		return err
-	}
-	values.Set("Timestamp", time.Now().UTC().Format(time.RFC3339))
-	origUrl.RawQuery = values.Encode()
+/*
+CartClear takes a CartId and HMAC that were returned when generating a cart
+It then removes the contents of the cart
+*/
+func (api AmazonProductAPI) CartClear(CartId, HMAC string) (string, error) {
 
-	return nil
+	params := map[string]string{
+		"CartId": CartId,
+		"HMAC":   HMAC,
+	}
+
+	return api.genSignAndFetch("CartClear", params)
 }
 
-func SignAmazonUrl(origUrl *url.URL, api AmazonProductAPI) (signedUrl string , err error){
+/*
+Cart get takes a CartID and HMAC that were returned when generaing a cart
+Returns the contents of the specified cart
+*/
+func (api AmazonProductAPI) CartGet(CartId, HMAC string) (string, error) {
 
-	escapeUrl := strings.Replace(origUrl.RawQuery, ",", "%2C", -1)
-	escapeUrl = strings.Replace(escapeUrl, ":", "%3A", -1)
-
-	params := strings.Split(escapeUrl, "&")
-	sort.Strings(params)
-	sortedParams := strings.Join(params, "&")
-
-	toSign := fmt.Sprintf("GET\n%s\n%s\n%s", origUrl.Host, origUrl.Path, sortedParams)
-
-	hasher := hmac.New(sha256.New, []byte(api.SecretKey))
-	_, err = hasher.Write([]byte(toSign))
-	if (err != nil) {
-		return "", err
+	params := map[string]string{
+		"CartId": CartId,
+		"HMAC":   HMAC,
 	}
 
-	hash := base64.StdEncoding.EncodeToString(hasher.Sum(nil))
-
-	hash = url.QueryEscape(hash)
-
-	newParams := fmt.Sprintf("%s&Signature=%s", sortedParams, hash)
-
-	origUrl.RawQuery = newParams
-
-	return origUrl.String(), nil
+	return api.genSignAndFetch("CartGet", params)
 }

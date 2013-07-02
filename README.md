@@ -1,3 +1,8 @@
+Simple library to simplify grabbing and posting data from the Amazon Affiliate API
+
+Have a look at the go docs here:
+http://godoc.org/github.com/DDRBoxman/go-amazon-product-api
+
 Example
 _______
 
@@ -5,7 +10,7 @@ _______
 
 	import (
 		"fmt"
-		"github.com/ddrboxman/go-amazon-product-api"
+		"github.com/DDRBoxman/go-amazon-product-api"
 	)
 
 	func main() {
