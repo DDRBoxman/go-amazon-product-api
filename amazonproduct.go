@@ -20,12 +20,36 @@ func (api AmazonProductAPI) ItemLookup(ItemId string) (string, error) {
 }
 
 /*
+ItemLookupWithResponseGroup takes a product ID (ASIN) and a ResponseGroup and returns the result
+*/
+func (api AmazonProductAPI) ItemLookupWithResponseGroup(ItemId string, ResponseGroup string) (string, error) {
+	params := map[string]string{
+		"ItemId":        ItemId,
+		"ResponseGroup": ResponseGroup,
+	}
+
+	return api.genSignAndFetch("ItemLookup", params)
+}
+
+/*
 MultipleItemLookup takes an array of product IDs (ASIN) and returns the result
 */
 func (api AmazonProductAPI) MultipleItemLookup(ItemIds []string) (string, error) {
 	params := map[string]string{
 		"ItemId":        strings.Join(ItemIds, ","),
 		"ResponseGroup": "Images,ItemAttributes,Small,EditorialReview",
+	}
+
+	return api.genSignAndFetch("ItemLookup", params)
+}
+
+/*
+MultipleItemLookupWithResponseGroup takes an array of product IDs (ASIN) as well as a ResponseGroup and returns the result
+*/
+func (api AmazonProductAPI) MultipleItemLookupWithResponseGroup(ItemIds []string, ResponseGroup string) (string, error) {
+	params := map[string]string{
+		"ItemId":        strings.Join(ItemIds, ","),
+		"ResponseGroup": ResponseGroup,
 	}
 
 	return api.genSignAndFetch("ItemLookup", params)
