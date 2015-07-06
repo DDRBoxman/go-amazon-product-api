@@ -62,7 +62,7 @@ func GenerateAmazonUrl(api AmazonProductAPI, Operation string, Parameters map[st
 	values.Add("Operation", Operation)
 	values.Add("Service", "AWSECommerceService")
 	values.Add("AWSAccessKeyId", api.AccessKey)
-	values.Add("Version", "2009-01-01")
+	values.Add("Version", "2013-08-01")
 	values.Add("AssociateTag", api.AssociateTag)
 
 	for k, v := range Parameters {
