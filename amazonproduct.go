@@ -56,7 +56,7 @@ func (api AmazonProductAPI) MultipleItemLookupWithResponseGroup(ItemIds []string
 }
 
 /*
-ItemSearchByKeyword takes a string containg keywords and returns the search results
+ItemSearchByKeyword takes a string containing keywords and returns the search results
 */
 func (api AmazonProductAPI) ItemSearchByKeyword(Keywords string, page int) (string, error) {
 	params := map[string]string{
@@ -147,7 +147,7 @@ func (api AmazonProductAPI) CartClear(CartId, HMAC string) (string, error) {
 }
 
 /*
-Cart get takes a CartID and HMAC that were returned when generaing a cart
+Cart get takes a CartID and HMAC that were returned when generating a cart
 Returns the contents of the specified cart
 */
 func (api AmazonProductAPI) CartGet(CartId, HMAC string) (string, error) {
@@ -158,4 +158,14 @@ func (api AmazonProductAPI) CartGet(CartId, HMAC string) (string, error) {
 	}
 
 	return api.genSignAndFetch("CartGet", params)
+}
+
+/*
+BrowseNodeLookup takes a BrowseNodeId and returns the result.
+ */
+func (api AmazonProductAPI) BrowseNodeLookup(nodeId string) (string, error) {
+	params := map[string]string{
+		"BrowseNodeId":      nodeId,
+	}
+	return api.genSignAndFetch("BrowseNodeLookup", params)
 }
