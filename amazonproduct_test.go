@@ -36,7 +36,7 @@ func Test_SignAmazonUrl_1(t *testing.T) {
 
 func Test_GenerateAmazonUrl_ItemSearch(t *testing.T) {
 
-	urlString := `http://ecs.amazonaws.co.uk/onca/xml?Service=AWSECommerceService&AWSAccessKeyId=AKIAIOSFODNN7EXAMPLE&Operation=ItemSearch&Keywords=sgt+frog&Version=2009-01-01&SearchIndex=All&AssociateTag=mytag-20`
+	urlString := `http://ecs.amazonaws.co.uk/onca/xml?Service=AWSECommerceService&AWSAccessKeyId=AKIAIOSFODNN7EXAMPLE&Operation=ItemSearch&Keywords=sgt+frog&Version=2013-08-01&SearchIndex=All&AssociateTag=mytag-20`
 
 	var api AmazonProductAPI
 	api.Host = "ecs.amazonaws.co.uk"
