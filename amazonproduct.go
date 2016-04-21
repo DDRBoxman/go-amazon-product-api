@@ -162,10 +162,18 @@ func (api AmazonProductAPI) CartGet(CartId, HMAC string) (string, error) {
 
 /*
 BrowseNodeLookup takes a BrowseNodeId and returns the result.
- */
+*/
 func (api AmazonProductAPI) BrowseNodeLookup(nodeId string) (string, error) {
 	params := map[string]string{
-		"BrowseNodeId":      nodeId,
+		"BrowseNodeId": nodeId,
+	}
+	return api.genSignAndFetch("BrowseNodeLookup", params)
+}
+
+func (api AmazonProductAPI) BrowseNodeLookupWithResponseGroup(nodeId string, responseGroup string) (string, error) {
+	params := map[string]string{
+		"BrowseNodeId":  nodeId,
+		"ResponseGroup": responseGroup,
 	}
 	return api.genSignAndFetch("BrowseNodeLookup", params)
 }
