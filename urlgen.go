@@ -18,6 +18,7 @@ type AmazonProductAPI struct {
 	SecretKey    string
 	AssociateTag string
 	Host         string
+	Client       *http.Client
 }
 
 func (api AmazonProductAPI) genSignAndFetch(Operation string, Parameters map[string]string) (string, error) {
@@ -33,7 +34,11 @@ func (api AmazonProductAPI) genSignAndFetch(Operation string, Parameters map[str
 		return "", err
 	}
 
-	resp, err := http.Get(signedurl)
+	if api.Client == nil {
+		api.Client = http.DefaultClient
+	}
+
+	resp, err := api.Client.Get(signedurl)
 	if err != nil {
 		return "", err
 	}
