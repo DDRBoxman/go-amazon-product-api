@@ -14,6 +14,8 @@ _______
 
 	import (
 		"fmt"
+		"net/http"
+
 		"github.com/DDRBoxman/go-amazon-product-api"
 	)
 
@@ -24,11 +26,13 @@ _______
 		api.SecretKey = ""
 		api.Host = "webservices.amazon.com"
 		api.AssociateTag = ""
+		api.Client = http.Client // optional
 
-		result,err := api.ItemSearchByKeyword("sgt+frog")
+		result,err := api.ItemSearchByKeyword("sgt+frog", 0)
 		if (err != nil) {
 			fmt.Println(err)
 		}
 
 		fmt.Println(result)
 	}
+
