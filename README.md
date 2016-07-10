@@ -26,7 +26,7 @@ _______
 		api.SecretKey = ""
 		api.Host = "webservices.amazon.com"
 		api.AssociateTag = ""
-		api.Client = http.Client // optional
+		api.Client = &http.Client{} // optional
 
 		result,err := api.ItemSearchByKeyword("sgt+frog", 0)
 		if (err != nil) {
