@@ -2,6 +2,7 @@
 package amazonproduct
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -26,6 +27,18 @@ func (api AmazonProductAPI) ItemLookupWithResponseGroup(ItemId string, ResponseG
 	params := map[string]string{
 		"ItemId":        ItemId,
 		"ResponseGroup": ResponseGroup,
+	}
+
+	return api.genSignAndFetch("ItemLookup", params)
+}
+
+/*
+ItemLookupWithParams takes the params for ItemLookup and returns the result
+*/
+func (api AmazonProductAPI) ItemLookupWithParams(params map[string]string) (string, error) {
+	_, present := params["ItemId"]
+	if !present {
+		return "", errors.New("ItemId property is required in the params map")
 	}
 
 	return api.genSignAndFetch("ItemLookup", params)
