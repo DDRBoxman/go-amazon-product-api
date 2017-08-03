@@ -15,7 +15,7 @@ _______
 	import (
 		"fmt"
 		"net/http"
-
+		"encoding/xml"
 		"github.com/DDRBoxman/go-amazon-product-api"
 	)
 
@@ -34,5 +34,13 @@ _______
 		}
 
 		fmt.Println(result)
+
+
+		//Parse result
+		if err == nil {
+			aws := new(ItemLookupResponse)
+			xml.Unmarshal([]byte(result), aws)
+			//TODO: Use "aws" freely :-)
+		}
 	}
 
