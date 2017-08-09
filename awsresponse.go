@@ -40,15 +40,16 @@ type Item struct {
 	ASIN             string
 	URL              string
 	DetailPageURL    string
-	ItemAttributes   ItemAttributes
+	ItemAttributes   *ItemAttributes
 	OfferSummary     OfferSummary
 	Offers           Offers
 	SalesRank        int
-	SmallImage       Image
-	MediumImage      Image
-	LargeImage       Image
+	SmallImage       *Image
+	MediumImage      *Image
+	LargeImage       *Image
+	ImageSets        *ImageSets
 	EditorialReviews EditorialReviews
-	BrowseNodes struct {
+	BrowseNodes      struct {
 		BrowseNode []BrowseNode
 	}
 }
@@ -57,7 +58,7 @@ type Item struct {
 type BrowseNode struct {
 	BrowseNodeID string `xml:"BrowseNodeId"`
 	Name         string
-	TopSellers struct {
+	TopSellers   struct {
 		TopSeller []TopSeller
 	}
 	Ancestors struct {
@@ -183,4 +184,19 @@ type BrowseNodeLookupResponse struct {
 		}
 		BrowseNode BrowseNode
 	}
+}
+
+type ImageSets struct {
+	ImageSet []ImageSet
+}
+
+type ImageSet struct {
+	//Category string `xml:"Category,attr"`
+	Category       string `xml:",attr"`
+	SwatchImage    *Image
+	SmallImage     *Image
+	ThumbnailImage *Image
+	TinyImage      *Image
+	MediumImage    *Image
+	LargeImage     *Image
 }
