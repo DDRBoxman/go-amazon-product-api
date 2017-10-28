@@ -169,7 +169,7 @@ type ItemSearchResponse struct {
 			ItemSearchRequest ItemSearchRequest
 		}
 		Items                []Item `xml:"Item"`
-		TotalResult          int
+		TotalResults         int
 		TotalPages           int
 		MoreSearchResultsUrl string
 	}
