@@ -110,7 +110,7 @@ type Offers struct {
 // OfferSummary response group
 type OfferSummary struct {
 	LowestNewPrice   Price
-	LowerUsedPrice   Price
+	LowestUsedPrice  Price
 	TotalNew         int
 	TotalUsed        int
 	TotalCollectible int
