@@ -110,7 +110,7 @@ type Offers struct {
 // OfferSummary response group
 type OfferSummary struct {
 	LowestNewPrice   Price
-	LowerUsedPrice   Price
+	LowestUsedPrice  Price
 	TotalNew         int
 	TotalUsed        int
 	TotalCollectible int
@@ -169,7 +169,7 @@ type ItemSearchResponse struct {
 			ItemSearchRequest ItemSearchRequest
 		}
 		Items                []Item `xml:"Item"`
-		TotalResult          int
+		TotalResults         int
 		TotalPages           int
 		MoreSearchResultsUrl string
 	}

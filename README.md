@@ -38,7 +38,7 @@ _______
 
 		//Parse result
 		if err == nil {
-			aws := new(ItemLookupResponse)
+			aws := new(amazonproduct.ItemLookupResponse)
 			xml.Unmarshal([]byte(result), aws)
 			//TODO: Use "aws" freely :-)
 		}
