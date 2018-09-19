@@ -80,7 +80,7 @@ type ItemAttributes struct {
 	Publisher       string
 	NumberOfItems   int
 	PackageQuantity int
-	Feature         string
+	Feature         []string
 	Model           string
 	ProductGroup    string
 	ReleaseDate     string
