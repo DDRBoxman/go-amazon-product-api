@@ -66,14 +66,20 @@ type BrowseNode struct {
 	}
 }
 
+// Creator represents a creator node returned by API
+type Creator struct {
+	Role  string `xml:"Role,attr"`
+	Value string `xml:",chardata"`
+}
+
 // ItemAttributes response group
 type ItemAttributes struct {
-	Author          string
+	Author          []string
 	Binding         string
 	Brand           string
 	Color           string
 	EAN             string
-	Creator         string
+	Creator         []Creator
 	Title           string
 	ListPrice       Price
 	Manufacturer    string
