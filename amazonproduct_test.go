@@ -26,7 +26,7 @@ func Test_SignAmazonUrl_1(t *testing.T) {
 
 	resultUrl, err := SignAmazonUrl(url, api)
 	if err != nil {
-		t.Error("Signing failure: %v", err)
+		t.Errorf("Signing failure: %v", err)
 	}
 
 	if signedUrl != resultUrl {
@@ -57,7 +57,7 @@ func Test_GenerateAmazonUrl_ItemSearch(t *testing.T) {
 	if genurl != nil {
 		resultUrl, err := SignAmazonUrl(genurl, api)
 		if err != nil {
-			t.Error("Signing failure: %v", err)
+			t.Errorf("Signing failure: %v", err)
 		}
 
 		parsedurl, err := url.Parse(urlString)
@@ -67,7 +67,7 @@ func Test_GenerateAmazonUrl_ItemSearch(t *testing.T) {
 
 		urlString, err = SignAmazonUrl(parsedurl, api)
 		if err != nil {
-			t.Error("Signing failure! %v", err)
+			t.Errorf("Signing failure! %v", err)
 		}
 
 		t.Log(urlString)

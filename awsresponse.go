@@ -83,6 +83,7 @@ type ItemAttributes struct {
 	Feature         []string
 	Model           string
 	ProductGroup    string
+	PublicationDate string
 	ReleaseDate     string
 	Studio          string
 	Warranty        string
