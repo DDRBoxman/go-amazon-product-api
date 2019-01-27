@@ -66,7 +66,7 @@ type BrowseNode struct {
 	}
 }
 
-// Creator represents a creator node returned by API
+// Creator element in ItemAttributes
 type Creator struct {
 	Role  string `xml:"Role,attr"`
 	Value string `xml:",chardata"`
@@ -79,6 +79,7 @@ type ItemAttributes struct {
 	Brand           string
 	Color           string
 	EAN             string
+	EISBN           string
 	Creator         []Creator
 	Title           string
 	ListPrice       Price
