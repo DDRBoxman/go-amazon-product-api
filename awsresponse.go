@@ -100,11 +100,12 @@ type ItemAttributes struct {
 
 // Offer response attribute
 type Offer struct {
-	Condition       string `xml:"OfferAttributes>Condition"`
-	ID              string `xml:"OfferListing>OfferListingId"`
-	Price           Price  `xml:"OfferListing>Price"`
-	PercentageSaved uint   `xml:"OfferListing>PercentageSaved"`
-	Availability    string `xml:"OfferListing>Availability"`
+	Condition          string `xml:"OfferAttributes>Condition"`
+	ID                 string `xml:"OfferListing>OfferListingId"`
+	IsEligibleForPrime bool   `xml:"OfferListing>IsEligibleForPrime"`
+	Price              Price  `xml:"OfferListing>Price"`
+	PercentageSaved    uint   `xml:"OfferListing>PercentageSaved"`
+	Availability       string `xml:"OfferListing>Availability"`
 }
 
 // Offers response group
